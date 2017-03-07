@@ -1,0 +1,6 @@
+version: "2"
+services:
+  registry:
+    image: registry:{{ registry_tag }}
+    ports:
+      - "{{ registry_port }}:{{ registry_port }}"
