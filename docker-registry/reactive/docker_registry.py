@@ -1,4 +1,3 @@
-from charmhelpers.core.hookenv import log
 from charmhelpers.core.hookenv import config
 from charmhelpers.core.hookenv import open_port
 from charmhelpers.core.hookenv import close_port
@@ -18,14 +17,12 @@ def launch_standalone_formation():
     path = resource_get('registry')
     if path:
         if not check_call(['docker', 'load', '-i', path]):
+            status_set('maintenance', 'Cannot import registry resource.')
             return
-        images = check_output(['docker', 'images'])
-        log(images, 'INFO')
 
     start_application()
     set_state('docker-registry.standalone.running')
-    status_msg = 'Docker registry ready'
-    status_set('active', status_msg)
+    status_set('active', 'Docker registry ready.')
 
 
 @when_any('config.changed.registry_port')
