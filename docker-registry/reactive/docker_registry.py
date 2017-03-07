@@ -1,5 +1,4 @@
 from charms.docker import Compose
-from charms.templating.jinja2 import render
 from charmhelpers.core.hookenv import config
 from charmhelpers.core.hookenv import open_port
 from charmhelpers.core.hookenv import close_port
@@ -14,12 +13,6 @@ from charms.reactive import remove_state
 @when_not('block_standalone')
 def launch_standalone_formation():
     """ By default we want to execute the stand-alone formation """
-
-    # By default, the render method looks in the `templates` directory
-    # This defines src, tgt, and context.  Context is used for variable
-    # substitution during the rendering of the template
-    render('docker-compose.yml', 'files/docker-registry/docker-compose.yml',
-           config())
 
     # Start our application, and open the ports
     start_application()
@@ -64,9 +57,6 @@ def replace_redis_container(redis):
     context.update(config())
     context.update({'redis_host': redis_host})
 
-    render('docker-compose.yml', 'files/docker-registry/docker-compose.yml',
-           context)
-
     start_application()
     status_set('active', 'Ready to vote!')
     # Set our idempotency state
@@ -87,8 +77,6 @@ def replace_postgres_container(postgres):
     context = {}
     context.update(config())
     context.update(pgdata)
-    render('docker-compose.yml', 'files/docker-registry/docker-compose.yml',
-           context)
 
     start_application()
     status_set('active', 'Ready to vote!')
@@ -114,9 +102,6 @@ def run_with_external_services(postgres, redis):
     context.update(config())
     context.update({'redis_host': redis_host})
     context.update(pgdata)
-
-    render('docker-compose.yml', 'files/docker-registry/docker-compose.yml',
-           context)
 
     start_application()
     status_set('active', 'Ready to vote!')
