@@ -1,4 +1,8 @@
 options:
+  registry_tag:
+    type: string
+    default: latest
+    description: Registry tag to run
   registry_port:
     type: int
     default: 5000
