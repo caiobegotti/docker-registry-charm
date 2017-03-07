@@ -8,3 +8,8 @@ tags:
   - application-server
   - containers
 subordinate: false
+resources:
+  registry:
+    type: file
+    filename: registry.tar
+    description: The tarball of the Docker registry, as saved after a Docker pull
