@@ -1,0 +1,10 @@
+name: docker-registry
+summary: Docker registry server
+maintainer: Caio Begotti <caio.begotti@canonical.com>
+description: |
+  The Docker registry is a stateless, highly scalable server side application
+  that stores and lets you distribute Docker images.
+tags:
+  - application-server
+  - containers
+subordinate: false

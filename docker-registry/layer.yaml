@@ -1,0 +1,4 @@
+includes:
+  - 'layer:docker'
+  - 'interface:http'
+repo: https://github.com/caio1982/docker-registry-charm
