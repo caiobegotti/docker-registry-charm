@@ -13,6 +13,15 @@ resources:
     type: file
     filename: registry.tar
     description: The tarball of the Docker registry, as saved after a Docker pull
+storage:
+  docker-registry:
+    type: filesystem
+    description: >
+      Image data files (i.e. $REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY).
+      Stores all of your data and images layers.
+    # the size of an empty registry image loaded in
+    minimum-size: 100M
+    location: /srv/docker-registry-storage
 provides:
   website:
     interface: http
