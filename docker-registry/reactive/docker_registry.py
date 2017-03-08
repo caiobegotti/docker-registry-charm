@@ -79,7 +79,7 @@ def attach():
     mount = storage_get()['location']
     unitdata.kv().set(data_mount_key, mount)
     unitdata.kv().set(
-        data_path_key, os.path.join(mount, '/var/lib/docker'))
+        data_path_key, os.path.join(mount, 'var/lib/docker'))
 
     log('Docker registry storage attached: {}'.format(mount))
 
@@ -88,7 +88,7 @@ def attach():
         free_space = shutil.disk_usage(mount).free
 
         if required_space > free_space:
-            status_set('blocked', 'Not enough free space for storage.')
+            status_set('blocked', 'Not enough free storage space.')
         return
 
     apt.queue_install(['rsync'])
@@ -138,3 +138,4 @@ def migrate():
 
     os.replace(old_data_dir, backup_data_dir)
     os.symlink(new_data_dir, old_data_dir)
+    status_set('active', 'Docker registry ready.')

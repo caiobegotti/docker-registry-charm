@@ -21,7 +21,7 @@ storage:
       Stores all of your data and images layers.
     # the size of an empty registry image loaded in
     minimum-size: 100M
-    location: /srv/docker-registry-storage
+    location: /srv/data
 provides:
   website:
     interface: http
