@@ -16,8 +16,8 @@ juju deploy ./xenial/docker-registry --series xenial
 If you cannot pull upstream images to install the registry, you can use a resource:
 
 ```
-docker pull registry:latest
-docker save -o /tmp/registry.tar registry:latest
+docker pull registry:2.6.0
+docker save -o /tmp/registry.tar registry:2.6.0
 juju deploy ./xenial/docker-registry --series xenial --resource registry=/tmp/registry.tar
 ```
 

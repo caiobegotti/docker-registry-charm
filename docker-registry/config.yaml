@@ -1,7 +1,7 @@
 options:
   registry_tag:
     type: string
-    default: latest
+    default: 2.6.0
     description: Registry tag to run
   registry_port:
     type: int
