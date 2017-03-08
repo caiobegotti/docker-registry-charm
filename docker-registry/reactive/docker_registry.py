@@ -55,3 +55,7 @@ def start_application():
     compose.up()
 
     open_port(config('registry_port'))
+
+@when('website.available')
+def configure_website(website):
+    website.configure(port=config('registry_port'))

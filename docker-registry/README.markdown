@@ -27,3 +27,20 @@ Verify the Docker registry responds after deploying it:
 juju expose docker-registry
 curl -X GET http://<docker_registry_ip_address>:5000/v2/_catalog
 ```
+
+Optionally, hook your Docker registry to HAProxy and Apache units so you have a front-end:
+
+```
+juju deploy cs:haproxy
+juju deploy cs:apache2
+juju add-relation docker-registry:website haproxy:reverseproxy
+juju add-relation haproxy:website apache2:balancer
+juju unexpose docker-registry
+juju expose apache2 # plus other standard apache settings like templates, servername etc
+```
+
+Verify the proxying is now working:
+
+```
+curl -X GET http://<apache_ip_address>/v2/_catalog
+```

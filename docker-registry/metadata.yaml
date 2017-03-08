@@ -13,3 +13,6 @@ resources:
     type: file
     filename: registry.tar
     description: The tarball of the Docker registry, as saved after a Docker pull
+provides:
+  website:
+    interface: http
