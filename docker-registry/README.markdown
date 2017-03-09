@@ -1,5 +1,5 @@
 # docker-registry-charm
-Docker registry charm for Juju, to be used with the Canonical Distribution of Kubernetes (CDK):
+Docker registry charm for Juju, to be used with the Canonical Distribution of Kubernetes (CDK) on Ubuntu Xenial:
 
 Build the charm (until it is published to the charm store) with:
 
