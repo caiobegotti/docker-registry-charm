@@ -2,3 +2,4 @@ docker-registry/registry.tar
 docker-registry/trusty
 docker-registry/xenial
 docker-registry/deps
+docker-registry/builds

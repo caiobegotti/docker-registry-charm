@@ -4,13 +4,13 @@ Docker registry charm for Juju, to be used with the Canonical Distribution of Ku
 Build the charm (until it is published to the charm store) with:
 
 ```
-charm build --series xenial
+charm build
 ```
 
 Deploy it locally with:
 
 ```
-juju deploy ./xenial/docker-registry --series xenial
+juju deploy ./builds/docker-registry
 ```
 
 If you cannot pull upstream images to install the registry, you can use a resource:
@@ -18,7 +18,7 @@ If you cannot pull upstream images to install the registry, you can use a resour
 ```
 docker pull registry:2.6.0
 docker save -o /tmp/registry.tar registry:2.6.0
-juju deploy ./xenial/docker-registry --series xenial --resource registry=/tmp/registry.tar
+juju deploy ./builds/docker-registry --resource registry=/tmp/registry.tar
 ```
 
 Verify the Docker registry responds after deploying it:
