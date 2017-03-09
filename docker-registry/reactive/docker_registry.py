@@ -31,12 +31,15 @@ def start():
     compose = Compose('files/docker-registry')
     compose.up()
     open_port(config('registry_port'))
+    status_set('active', 'Docker registry ready.')
 
 
 @hook('stop')
 def stop():
+    compose = Compose('files/docker-registry')
     compose.down()
-    close_port(cfg.previous('registry_port'))
+    close_port(config.previous('registry_port'))
+    status_set('maintenance', 'Docker registry stopped.')
 
 
 @when('docker.available')
@@ -72,6 +75,8 @@ def reconfigure():
 
     remove_state('docker-registry.standalone.running')
     remove_state('docker-registry.running')
+
+    status_set('active', 'Docker registry ready.')
 
 
 @when('website.available')
@@ -115,6 +120,7 @@ def detaching():
 @when_not('docker-registry.storage.docker-registry.migrated')
 def migrate():
     if reactive.is_state('docker-registry.standalone.running'):
+        stop()
         host.service_stop('docker')
 
     old_data_dir = '/var/lib/docker'
@@ -152,5 +158,7 @@ def migrate():
     os.symlink(new_data_dir, old_data_dir)
 
     host.service_start('docker')
+    start()
+
     reactive.set_state('docker-registry.storage.docker-registry.migrated')
     status_set('active', 'Docker registry ready.')
