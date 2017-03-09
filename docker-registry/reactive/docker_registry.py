@@ -6,6 +6,7 @@ from charmhelpers.core.hookenv import status_set
 from charmhelpers.core.hookenv import resource_get
 from charmhelpers.core.hookenv import storage_get
 from charmhelpers.core.hookenv import DEBUG
+from charmhelpers.core import host
 from charmhelpers.core import unitdata
 
 from charms import apt, reactive
@@ -25,6 +26,19 @@ import subprocess
 import time
 
 
+@hook('start')
+def start():
+    compose = Compose('files/docker-registry')
+    compose.up()
+    open_port(config('registry_port'))
+
+
+@hook('stop')
+def stop():
+    compose.down()
+    close_port(cfg.previous('registry_port'))
+
+
 @when('docker.available')
 @when_not('docker-registry.standalone.running')
 def start_standalone():
@@ -36,7 +50,7 @@ def start_standalone():
            'files/docker-registry/docker-compose.yml',
            config())
 
-    startup()
+    start()
     set_state('docker-registry.standalone.running')
     status_set('active', 'Docker registry ready.')
 
@@ -60,16 +74,10 @@ def reconfigure():
     remove_state('docker-registry.running')
 
 
-def startup():
-    compose = Compose('files/docker-registry')
-    compose.up()
-
-    open_port(config('registry_port'))
-
-
 @when('website.available')
 def configure_website(website):
     website.configure(port=config('registry_port'))
+
 
 # storage support was all taken from the postgresql charm
 data_path_key = 'docker-registry.storage.registry.path'
@@ -104,7 +112,11 @@ def detaching():
 @when('docker.available')
 @when('docker-registry.standalone.running')
 @when('apt.installed.rsync')
+@when_not('docker-registry.storage.docker-registry.migrated')
 def migrate():
+    if reactive.is_state('docker-registry.standalone.running'):
+        host.service_stop('docker')
+
     old_data_dir = '/var/lib/docker'
     new_data_dir = unitdata.kv().get(data_path_key)
 
@@ -138,4 +150,7 @@ def migrate():
 
     os.replace(old_data_dir, backup_data_dir)
     os.symlink(new_data_dir, old_data_dir)
+
+    host.service_start('docker')
+    reactive.set_state('docker-registry.storage.docker-registry.migrated')
     status_set('active', 'Docker registry ready.')
