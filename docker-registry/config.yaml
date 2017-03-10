@@ -7,3 +7,7 @@ options:
     type: int
     default: 5000
     description: Host port to bind the Docker registry
+  install_from_upstream:
+    type: boolean
+    default: true
+    description: Force it to workaround Server/Client API mismatches

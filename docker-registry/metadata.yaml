@@ -1,7 +1,6 @@
 series:
   - xenial
-# - trusty commented out until we figure out this client/server version mismatch bug:
-# client and server don't have same version (client : 1.22, server: 1.18)
+  - trusty
 name: docker-registry
 summary: Docker registry server
 maintainer: Caio Begotti <caio.begotti@canonical.com>
