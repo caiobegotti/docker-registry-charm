@@ -1,6 +1,25 @@
 version: "2"
 services:
   registry:
+    restart: always
     image: registry:{{ registry_tag }}
     ports:
       - "{{ registry_port }}:{{ registry_port }}"
+  environment:
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+    REGISTRY_HTTP_TLS_KEY: /keys/domain.key
+    REGISTRY_AUTH: htpasswd
+    REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+    REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /srv/data/
+    STORAGE_PATH: /srv/data/
+    REGISTRY_STORAGE: swift
+    SWIFT_AUTH_URL: "{{ swift_auth_url }}"
+    SWIFT_USERNAME: "{{ swift_username }}"
+    SWIFT_PASSWORD: "{{ swift_password }}"
+    SWIFT_TENANT_NAME: "{{ swift_tenant_name }}"
+    SWIFT_REGION_NAME: "{{ swift_region_name }}"
+  volumes:
+    - /etc/ssl/certs/:/certs
+    - /etc/ssl/private/:/keys
+    - /auth:/auth

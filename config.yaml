@@ -11,3 +11,28 @@ options:
     type: boolean
     default: true
     description: Force it to workaround Server/Client API mismatches
+  swift_auth_url:
+    type: string
+    default: ""
+    description: >
+        A keystone auth url.
+  swift_region_name:
+    type: string
+    default: ""
+    description: >
+        A keystone region name.
+  swift_tenant_name:
+    type: string
+    default: ""
+    description: >
+        A keystone tenant name.
+  swift_username:
+    type: string
+    default: ""
+    description: >
+        A keystone username.
+  swift_password:
+    type: string
+    default: ""
+    description: >
+        A keystone password.
