@@ -1,0 +1,51 @@
+ServerName {{ servername }}
+
+<VirtualHost _default_:443>
+    ServerName {{ servername }}
+
+    # Similar to the default Apache log format, but abuses the ident field
+    # to store the HTTP request's Host header (used for web stats).
+    LogFormat "%h %{Host}i %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" RequestId
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ servername }}-https-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ servername }}-https-access.log RequestId
+    LogLevel warn
+
+    Header set Strict-Transport-Security "max-age=15768000; includeSubDomains; preload"
+
+    SSLEngine On
+    SSLProxyEngine On
+
+{%- if ssl_certlocation %}
+    SSLCertificateFile    /etc/ssl/certs/{{ ssl_certlocation }}
+    SSLCertificateKeyFile /etc/ssl/private/{{ ssl_keylocation }}
+{%- else %}
+    # Snakeoil cert for testing.
+    SSLCertificateFile    /etc/ssl/certs/ssl-cert-snakeoil.pem
+    SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+{%- endif %}
+
+{%- if ssl_chainlocation %}
+    SSLCertificateChainFile /etc/ssl/certs/{{ ssl_chainlocation }}
+{%- endif %}
+
+    ProxyRequests off
+    ProxyPreserveHost on
+
+    <Proxy *>
+        Order Allow,Deny
+        Allow from all
+    </Proxy>
+
+    RequestHeader set X-Forwarded-Protocol "https"
+    RequestHeader set X-Forwarded-Ssl "on"
+
+    RewriteEngine on
+
+    RewriteCond %{HTTP_HOST} !^{{ servername|replace('.', '\\.') }}$  [NC]
+    RewriteRule ^/(.*) https://{{ servername }}/$1 [R=301,L]
+
+    #ProxyPass / balancer://sas-app/
+    #ProxyPassReverse / balancer://sas-app/
+
+</VirtualHost>

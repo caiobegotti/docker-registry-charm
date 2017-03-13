@@ -33,14 +33,33 @@ Optionally, hook your Docker registry to HAProxy and Apache units so you have a 
 ```
 juju deploy cs:haproxy
 juju deploy cs:apache2
+```
+
+Once deployed, set up Apache configs before adding relations and exposing it:
+
+```
+juju config apache2 servername=<apache_ip_address>
+juju config apache2 "enable_modules=proxy rewrite proxy_http proxy_balancer lbmethod_byrequests ssl headers"
+juju config apache2 "vhost_https_template=$(cat example/server.https | base64 -w 0)"
+juju config apache2 "vhost_http_template=$(cat example/server.http | base64 -w 0)"
+juju config apache2 "ssl_key=$(cat example/server.key | base64 -w 0)"
+juju config apache2 "ssl_cert=$(cat example/server.crt | base64 -w 0)"
+juju config apache2 "ssl_keylocation=server.key"
+juju config apache2 "ssl_certlocation=server.crt"
+
+```
+
+Finally, wrap it up:
+
+```
 juju add-relation docker-registry:website haproxy:reverseproxy
 juju add-relation haproxy:website apache2:balancer
 juju unexpose docker-registry
-juju expose apache2 # plus other standard apache settings like templates, servername etc
+juju expose apache2
 ```
 
-Verify the proxying is now working:
+Verify the whole proxying is now working with TLS termination:
 
 ```
-curl -X GET http://<apache_ip_address>/v2/_catalog
+curl -X GET https://<apache_ip_address>/v2/_catalog
 ```

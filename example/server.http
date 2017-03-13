@@ -1,0 +1,19 @@
+ServerName {{ servername }}
+
+<VirtualHost _default_:80>
+    ServerName {{ servername }}
+
+    # Similar to the default Apache log format, but abuses the ident field
+    # to store the HTTP request's Host header (used for web stats).
+    LogFormat "%h %{Host}i %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" RequestId
+
+    ErrorLog ${APACHE_LOG_DIR}/{{ servername }}-http-error.log
+    CustomLog ${APACHE_LOG_DIR}/{{ servername }}-http-access.log RequestId
+
+    RequestHeader unset X-Forwarded-Protocol
+    RequestHeader unset X-Forwarded-Ssl
+
+    RedirectMatch permanent ^/(.*) https://{{ servername }}/$1
+
+    KeepAlive Off
+</VirtualHost>
