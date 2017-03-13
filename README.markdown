@@ -63,3 +63,13 @@ Verify the whole proxying is now working with TLS termination:
 ```
 curl -X GET https://<apache_ip_address>/v2/_catalog
 ```
+
+Push a test image to the new Docker registry using HTTPS:
+
+```
+docker pull busybox:latest
+docker tag busybox:latest <apache_ip_address>:443/busybox:latest
+docker push <apache_ip_address>:443/busybox:latest
+```
+
+Please note that you will need an actual signed certificate for this to work properly. The files inside the example/ directory are, well, an example of the settings only.
