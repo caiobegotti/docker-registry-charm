@@ -45,7 +45,7 @@ ServerName {{ servername }}
     RewriteCond %{HTTP_HOST} !^{{ servername|replace('.', '\\.') }}$  [NC]
     RewriteRule ^/(.*) https://{{ servername }}/$1 [R=301,L]
 
-    #ProxyPass / balancer://sas-app/
-    #ProxyPassReverse / balancer://sas-app/
+    ProxyPass / balancer://haproxy/
+    ProxyPassReverse / balancer://haproxy/
 
 </VirtualHost>
