@@ -2,37 +2,38 @@ options:
   registry_tag:
     type: string
     default: 2.6.0
-    description: Registry tag to run
+    description: >
+        Registry tag to run
   registry_port:
     type: int
     default: 5000
-    description: Host port to bind the Docker registry
+    description: >
+        Host port to bind the Docker registry
+  registry_config:
+    type: string
+    default: ""
+    description: >
+        An optional base64'ed settings file for the Docker registry, see
+        https://docs.docker.com/registry/configuration/ for all options
+  registry_cert:
+    type: string
+    default: ""
+    description: >
+        A base64-encoded certificate to be used by the registry for TLS
+        (only considered by the charm if you set registry_key too)
+  registry_key:
+    type: string
+    default: ""
+    description: >
+        A base64-encoded certificate key file to be used by the registry for TLS
+        (only considered by the charm if you set registry_cert too)
+  registry_htpasswd:
+    type: string
+    default: ""
+    description: >
+        A base64-encoded htpasswd for user access to the registry (requires TLS)
   install_from_upstream:
     type: boolean
     default: true
-    description: Force it to workaround Server/Client API mismatches
-  swift_auth_url:
-    type: string
-    default: ""
     description: >
-        A keystone auth url.
-  swift_region_name:
-    type: string
-    default: ""
-    description: >
-        A keystone region name.
-  swift_tenant_name:
-    type: string
-    default: ""
-    description: >
-        A keystone tenant name.
-  swift_username:
-    type: string
-    default: ""
-    description: >
-        A keystone username.
-  swift_password:
-    type: string
-    default: ""
-    description: >
-        A keystone password.
+        Force it to workaround Server/Client API mismatches

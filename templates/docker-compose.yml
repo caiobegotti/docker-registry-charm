@@ -5,21 +5,20 @@ services:
     image: registry:{{ registry_tag }}
     ports:
       - "{{ registry_port }}:{{ registry_port }}"
-  environment:
-    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-    REGISTRY_HTTP_TLS_KEY: /keys/domain.key
-    REGISTRY_AUTH: htpasswd
-    REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
-    REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
-    REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /srv/data/
-    STORAGE_PATH: /srv/data/
-    REGISTRY_STORAGE: swift
-    SWIFT_AUTH_URL: "{{ swift_auth_url }}"
-    SWIFT_USERNAME: "{{ swift_username }}"
-    SWIFT_PASSWORD: "{{ swift_password }}"
-    SWIFT_TENANT_NAME: "{{ swift_tenant_name }}"
-    SWIFT_REGION_NAME: "{{ swift_region_name }}"
-  volumes:
-    - /etc/ssl/certs/:/certs
-    - /etc/ssl/private/:/keys
-    - /auth:/auth
+    environment:
+      # this dummy var is here just so parsing of the environment
+      # section is okay even without any conditionsl being true
+      DUMMY: dummy
+    {% if registry_cert and registry_key %}
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/docker-registry.crt
+      REGISTRY_HTTP_TLS_KEY: /keys/docker-registry.key
+    {% if registry_htpasswd %}
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_PATH: /configs/htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    {% endif %}
+    volumes:
+      - /etc/ssl/certs/:/certs
+      - /etc/ssl/private/:/keys
+      - /usr/local/etc/:/configs
+    {% endif %}

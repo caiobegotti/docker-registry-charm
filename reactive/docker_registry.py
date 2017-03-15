@@ -24,6 +24,7 @@ import os.path
 import shutil
 import subprocess
 import time
+import base64
 
 
 @hook('start')
@@ -58,7 +59,11 @@ def start_standalone():
     status_set('active', 'Docker registry ready.')
 
 
-@when_any('config.changed.registry_port', 'config.changed.registry_tag')
+@when_any('config.changed.registry_port',
+          'config.changed.registry_tag',
+          'config.changed.registry_cert',
+          'config.changed.registry_key',
+          'config.changed.registry_htpasswd')
 def reconfigure():
     cfg = config()
     # guard on first run, no previous values, so do nothing
@@ -67,6 +72,23 @@ def reconfigure():
 
     status_set('maintenance', 'Re-configuring port bindings.')
     close_port(cfg.previous('registry_port'))
+
+    if config('registry_cert') and config('registry_key'):
+        status_set('maintenance', 'Writing TLS files to /etc/ssl.')
+        with open('/etc/ssl/certs/docker-registry.crt', 'w') as f:
+            f.write(str(base64.b64decode(config('registry_cert'))))
+        with open('/etc/ssl/private/docker-registry.key', 'w') as f:
+            f.write(str(base64.b64decode(config('registry_key'))))
+
+    if config('registry_htpasswd') and (
+        not config('registry_key') or not config('registry_cert')):
+        status_set(
+            'blocked', 'Registry htpasswd needs TLS for basic-realm security')
+        return
+    else:
+        status_set('maintenance', 'Writing htpasswd to /usr/local/etc.')
+        with open('/usr/local/etc/htpasswd', 'w') as f:
+            f.write(str(base64.b64decode(config('registry_htpasswd'))))
 
     status_set('maintenance', 'Re-generating Docker compose YAML.')
     render('docker-compose.yml',
