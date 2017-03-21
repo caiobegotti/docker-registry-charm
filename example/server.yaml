@@ -1,0 +1,35 @@
+version: 0.1
+log:
+  level: debug
+  formatter: text
+  fields:
+    service: registry
+    environment: development
+storage:
+  s3:
+    accesskey: MY_ACCESS_KEY
+    secretkey: MY_SECRET_KEY
+    region: MY_REGION
+    regionendpoint: http://s3-external-1.amazonaws.com
+    bucket: MY_BUCKET_NAME
+    encrypt: true
+    secure: true
+    v4auth: true
+    chunksize: 5242880
+    rootdirectory: /organization/team/project/development
+  delete:
+    enabled: false
+  redirect:
+    disable: false
+  maintenance:
+    uploadpurging:
+      enabled: true
+      age: 168h
+      interval: 24h
+      dryrun: false
+    readonly:
+      enabled: false
+http:
+  addr: :MY_SERVICE_PORT
+  headers:
+    X-Content-Type-Options: [nosniff]

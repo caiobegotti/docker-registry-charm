@@ -7,18 +7,22 @@ services:
       - "{{ registry_port }}:{{ registry_port }}"
     environment:
       # this dummy var is here just so parsing of the environment
-      # section is okay even without any conditionsl being true
+      # section is okay even without any conditional being true
       DUMMY: dummy
     {% if registry_cert and registry_key %}
       REGISTRY_HTTP_TLS_CERTIFICATE: /certs/docker-registry.crt
       REGISTRY_HTTP_TLS_KEY: /keys/docker-registry.key
     {% if registry_htpasswd %}
+      # we only configure htpasswd if TLS is available
       REGISTRY_AUTH: htpasswd
       REGISTRY_AUTH_HTPASSWD_PATH: /configs/htpasswd
       REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
     {% endif %}
+    {% endif %}
     volumes:
       - /etc/ssl/certs/:/certs
       - /etc/ssl/private/:/keys
+    {% if registry_config %}
       - /usr/local/etc/:/configs
+    command: /configs/registry.yaml
     {% endif %}

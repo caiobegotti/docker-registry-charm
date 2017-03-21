@@ -63,7 +63,8 @@ def start_standalone():
           'config.changed.registry_tag',
           'config.changed.registry_cert',
           'config.changed.registry_key',
-          'config.changed.registry_htpasswd')
+          'config.changed.registry_htpasswd',
+          'config.changed.registry_config')
 def reconfigure():
     cfg = config()
     # guard on first run, no previous values, so do nothing
@@ -75,10 +76,10 @@ def reconfigure():
 
     if config('registry_cert') and config('registry_key'):
         status_set('maintenance', 'Writing TLS files to /etc/ssl.')
-        with open('/etc/ssl/certs/docker-registry.crt', 'w') as f:
-            f.write(str(base64.b64decode(config('registry_cert'))))
-        with open('/etc/ssl/private/docker-registry.key', 'w') as f:
-            f.write(str(base64.b64decode(config('registry_key'))))
+        with open('/etc/ssl/certs/docker-registry.crt', 'wb') as f:
+            f.write(base64.b64decode(config('registry_cert')))
+        with open('/etc/ssl/private/docker-registry.key', 'wb') as f:
+            f.write(base64.b64decode(config('registry_key')))
 
     if config('registry_htpasswd') and (
         not config('registry_key') or not config('registry_cert')):
@@ -87,8 +88,13 @@ def reconfigure():
         return
     else:
         status_set('maintenance', 'Writing htpasswd to /usr/local/etc.')
-        with open('/usr/local/etc/htpasswd', 'w') as f:
-            f.write(str(base64.b64decode(config('registry_htpasswd'))))
+        with open('/usr/local/etc/htpasswd', 'wb') as f:
+            f.write(base64.b64decode(config('registry_htpasswd')))
+
+    if config('registry_config'):
+        status_set('maintenance', 'Writing registry config to /usr/local/etc.')
+        with open('/usr/local/etc/registry.yaml', 'wb') as f:
+            f.write(base64.b64decode(config('registry_config')))
 
     status_set('maintenance', 'Re-generating Docker compose YAML.')
     render('docker-compose.yml',
