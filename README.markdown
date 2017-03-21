@@ -72,4 +72,4 @@ docker tag busybox:latest <apache_ip_address>:443/busybox:latest
 docker push <apache_ip_address>:443/busybox:latest
 ```
 
-Please note that you will need an actual signed certificate for this to work properly. The files inside the example/ directory are, well, an example of the settings only.
+Please note that you will need an actual signed certificate for this to work properly. The files inside the example/ directory are, well, an example of the settings only. The basic auth file in there is for an example user with an example password. The YAML file indicates how one would go around setting Amazon's S3 storage for the registry.
