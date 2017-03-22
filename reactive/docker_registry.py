@@ -81,8 +81,8 @@ def reconfigure():
         with open('/etc/ssl/private/docker-registry.key', 'wb') as f:
             f.write(base64.b64decode(config('registry_key')))
 
-    if config('registry_htpasswd') and (
-        not config('registry_key') or not config('registry_cert')):
+    if config('registry_htpasswd') and (not config('registry_key') or
+                                        not config('registry_cert')):
         status_set(
             'blocked', 'Registry htpasswd needs TLS for basic-realm security')
         return
@@ -115,6 +115,8 @@ def configure_website(website):
 # storage support was all taken from the postgresql charm
 data_path_key = 'docker-registry.storage.registry.path'
 data_mount_key = 'docker-registry.storage.registry.mount'
+
+
 @hook('docker-registry-storage-attached')
 def attach():
     mount = storage_get()['location']
@@ -135,11 +137,13 @@ def attach():
     apt.queue_install(['rsync'])
     reactive.set_state('docker-registry.storage.docker-registry.attached')
 
+
 @hook('docker-registry-storage-detaching')
 def detaching():
     unitdata.kv().unset(data_mount_key)
     unitdata.kv().unset(data_path_key)
     reactive.remove_state('docker-registry.storage.docker-registry.attached')
+
 
 @when('docker-registry.storage.docker-registry.attached')
 @when('docker.available')
